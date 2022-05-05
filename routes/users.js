@@ -19,7 +19,6 @@ router.post("/register", async (ctx) => {
   const findResult = await User.find({
     adminname: ctx.request.body.adminname,
   });
-  console.log(findResult);
   //判断是否存在该用户
   if (findResult.length > 0) {
     //状态码
@@ -32,6 +31,7 @@ router.post("/register", async (ctx) => {
     const newUser = new User({
       password: ctx.request.body.password,
       adminname: ctx.request.body.adminname,
+      role: "admin",
     });
     //返回给客户端 一定要await 否则会返回Not Found
     await newUser
@@ -86,6 +86,78 @@ router.post("/login", async (ctx) => {
       };
     }
   }
+});
+
+router.post("/delete", async (ctx) => {
+  //接收参数 post
+  const findResult = await User.findOneAndDelete({
+    adminname: ctx.request.body.adminname,
+  });
+  if (findResult) {
+    ctx.body = {
+      code: 200,
+      msg: "用户删除成功",
+    };
+  }
+});
+
+router.post("/edit", async (ctx) => {
+  //接收参数 post
+  console.log(ctx.request.body);
+  let findResult = await User.find({
+    adminname: ctx.request.body.adminName,
+  });
+  if (findResult.length > 0) {
+    ctx.body = {
+      status: 1007,
+      message: "用户名已存在",
+    };
+    return;
+  }
+
+  findResult = await User.updateOne(
+    {
+      adminname: ctx.request.body.Oldadminname,
+    },
+    {
+      adminname: ctx.request.body.adminName,
+      password: ctx.request.body.password,
+    }
+  );
+  if (findResult.acknowledged) {
+    // ctx.status = 404;
+    ctx.body = {
+      status: 200,
+      message: "用户信息修改成功",
+    };
+    // ctx.body = {
+    //   status: 404,
+    //   message: "用户不存在",
+    // };
+  }
+  console.log(findResult);
+});
+
+router.get("/list", async (ctx) => {
+  //接收参数 post
+  console.log(ctx.request.body);
+  // const findResult = await User.find({
+  //   adminname: ctx.request.body.Oldadminname,
+  // });
+  const findResult = await User.find();
+  // if (findResult.acknowledged) {
+  //   // ctx.status = 404;
+  ctx.body = {
+    status: 200,
+    message: "用户信息修改成功",
+    data: findResult,
+  };
+  // ctx.body = {
+  //   status: 404,
+  //   message: "用户不存在",
+  // };
+  // }
+  console.log(findResult);
 });
 
 module.exports = router;

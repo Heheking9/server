@@ -5,8 +5,13 @@ const userSchema = new Schema({
   adminname: {
     type: String,
     require: true,
+    unique: true,
   },
   password: {
+    type: String,
+    require: true,
+  },
+  role: {
     type: String,
     require: true,
   },

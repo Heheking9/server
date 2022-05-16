@@ -15,6 +15,12 @@ const userSchema = new Schema({
     type: String,
     require: true,
   },
+  checkedKeys: {
+    type: Array,
+  },
+  level: {
+    type: Array,
+  },
   isAdmin: {
     type: Boolean, //是否是管理员
     default: false, //默认false 管理员身份修改数据库即可
